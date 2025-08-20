@@ -4,6 +4,8 @@
 
 __xdata __at(XADDR_MOUSE_SCROLL_DIRECTION) int8_t scroll_direction = 0;
 __xdata __at(XADDR_MOUSE_SCROLL_AT_TIME) uint16_t scroll_at_time = 0;
+__xdata __at(XADDR_MOUSE_SCROLL_H_DIRECTION) int8_t scroll_h_direction = 0;
+__xdata __at(XADDR_MOUSE_SCROLL_H_AT_TIME) uint16_t scroll_h_at_time = 0;
 
 void mouse_handle_key(uint16_t custom_code, uint8_t down) {
     if (custom_code < 8) {
@@ -22,6 +24,11 @@ void mouse_handle_key(uint16_t custom_code, uint8_t down) {
         scroll_direction = custom_code == 12 ? down : -down;
         scroll_at_time = get_timer();
         break;
+    case 14: // Wheel left
+    case 15: // Wheel right
+        scroll_h_direction = custom_code == 15 ? down : -down;
+        scroll_h_at_time = get_timer();
+        break;
     }
 }
 
@@ -35,6 +42,17 @@ void mouse_process() {
         }
     } else {
         USB_EP3I_write(3, 0);
+    }
+
+    if (scroll_h_direction != 0) {
+        if (get_timer() >= scroll_h_at_time) {
+            USB_EP3I_write(4, scroll_h_direction);
+            USB_EP3I_send_now();
+            USB_EP3I_write(4, 0);
+            scroll_h_at_time = get_timer() + MOUSE_SCROLL_INTERVAL_MS;
+        }
+    } else {
+        USB_EP3I_write(4, 0);
     }
 
     USB_EP3I_send_now();
