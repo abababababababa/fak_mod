@@ -400,7 +400,7 @@ let _xaddr_defines =
   sizes
   |> util.array.enumerate
   |> std.array.fold_left (fun acc { index, value } =>
-      let is_dma_addr = std.string.is_match "^USB_EP\d$" (std.array.at index names) in
+      let is_dma_addr = std.string.is_match "^USB_EP\\d$" (std.array.at index names) in
       let start_must_even = kb.mcu.dma_must_even_address && is_dma_addr in
 
       let start =
