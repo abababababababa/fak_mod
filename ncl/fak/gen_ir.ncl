@@ -167,7 +167,7 @@ let encode_hold_tap_key_interrupt = fun { decision, trigger_on } =>
 
 let encode_hold_tap_key_interrupts = fun key_interrupts =>
   let encode_pair = (fun pair =>
-    (std.array.at 0 pair) + (util.bit.shift (util.array.last_or 0 pair) 4)
+    (std.array.at 0 pair) + (util.bit.shift (std.array.last_or 0 pair) 4)
   ) in
   key_interrupts
   |> std.array.map encode_hold_tap_key_interrupt
@@ -306,7 +306,7 @@ let _central_defines = {
   USB_EP0_SIZE = 8,
   USB_EP1_SIZE = 8,
   USB_EP2_SIZE = 8,
-  USB_EP3_SIZE = 4,
+  USB_EP3_SIZE = 5,
   KEY_EVENT_QUEUE_LEN = 32,
 } & util.record.only_if (combo_count > 0) {
   COMBO_KEY_QUEUE_LEN = combos
@@ -348,6 +348,8 @@ in {
   USB_EP3 = sizeof.usb_ep 3,
   MOUSE_SCROLL_DIRECTION = sizeof.int8_t,
   MOUSE_SCROLL_AT_TIME = sizeof.uint16_t,
+  MOUSE_SCROLL_H_DIRECTION = sizeof.int8_t,
+  MOUSE_SCROLL_H_AT_TIME = sizeof.uint16_t,
 }
 & util.record.only_if (layer_count > 1) (
   let sizeof = sizeof & {
@@ -398,7 +400,7 @@ let _xaddr_defines =
   sizes
   |> util.array.enumerate
   |> std.array.fold_left (fun acc { index, value } =>
-      let is_dma_addr = std.string.is_match "^USB_EP\\d$" (std.array.at index names) in
+      let is_dma_addr = std.string.is_match "^USB_EP\d$" (std.array.at index names) in
       let start_must_even = kb.mcu.dma_must_even_address && is_dma_addr in
 
       let start =
@@ -538,7 +540,7 @@ let rec _kscan | Kscan =
 {
   defines = _defines,
   kscan = _kscan,
-  "%{"side"}" = side,
+  "%{side}" = side,
 
   key_map = if side == 'peripheral then [] else
     std.array.map (fun layer => std.array.map encode_kc layer) km.layers,
