@@ -23,7 +23,7 @@ let mod_ = fun K => let K = fun mod => K { mods."%{mod}" = true } in {
         |> util.array.enumerate
         |> std.array.flat_map (fun { index, value } =>
             value
-            |> std.array.map (fun v => { "%{v}" = _K index })
+            |> std.array.map (fun v => { "%_`_`%{v}"_`_`" = _K index })
           )
         |> std.array.reduce_left (&),
       mod = mod_ (K 'regular),
@@ -93,6 +93,8 @@ let mod_ = fun K => let K = fun mod => K { mods."%{mod}" = true } in {
         UP =   K 11,
         WH_U = K 12,
         WH_D = K 13,
+        WH_L = K 14,
+        WH_R = K 15,
       },
     },
     tlex = K 'transparent_layer_exit {},
