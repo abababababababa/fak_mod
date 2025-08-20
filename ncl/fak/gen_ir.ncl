@@ -3,6 +3,7 @@ let { Set, Uint8, Uint16, Uint32, .. } = import "util_types.ncl" in
 let { tap, hold, .. } = import "keycode.ncl" in
 
 fun kb km side =>
+let side_for_ir = side in
 
 let virtual_keys_of_type = fun t =>
   km.virtual_keys
@@ -540,8 +541,7 @@ let rec _kscan | Kscan =
 {
   defines = _defines,
   kscan = _kscan,
-  side = side,
-  "%{std.to_string side}" = side,
+  side = side_for_ir,
 
   key_map = if side == 'peripheral then [] else
     std.array.map (fun layer => std.array.map encode_kc layer) km.layers,
