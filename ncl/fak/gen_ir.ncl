@@ -540,7 +540,7 @@ let rec _kscan | Kscan =
 {
   defines = _defines,
   kscan = _kscan,
-  "%{side}" = side,
+  "%{std.to_string side}" = side,
 
   key_map = if side == 'peripheral then [] else
     std.array.map (fun layer => std.array.map encode_kc layer) km.layers,
