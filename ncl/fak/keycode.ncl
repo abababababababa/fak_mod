@@ -23,7 +23,7 @@ let mod_ = fun K => let K = fun mod => K { mods."%{mod}" = true } in {
         |> util.array.enumerate
         |> std.array.flat_map (fun { index, value } =>
             value
-           |> std.array.map (fun v => { "%_`_`%{v}"_`_`" = _K index })
+            |> std.array.map (fun v => { "%_`_`%{v}"_`_`" = _K ind
           )
         |> std.array.reduce_left (&),
       mod = mod_ (K 'regular),
